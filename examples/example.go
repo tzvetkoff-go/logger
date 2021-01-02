@@ -2,19 +2,18 @@
 package main
 
 import (
-	"log/syslog"
 	"os"
 	"path"
 
 	"github.com/tzvetkoff-go/logger"
-	syslogBackend "github.com/tzvetkoff-go/logger/backends/syslog"
+	"github.com/tzvetkoff-go/logger/backends/syslog"
 )
 
 // revive:disable:line-length-limit
 
 func main() {
 	// As well as writing to stderr, send messages in JSON format to the system logging facility.
-	backend, err := syslogBackend.NewBackend(
+	backend, err := syslog.NewBackend(
 		"",
 		"",
 		syslog.LOG_DEBUG|syslog.LOG_LOCAL7,
@@ -23,8 +22,9 @@ func main() {
 	)
 	if err != nil {
 		logger.Error("could not connect to syslog: %s", err)
+	} else {
+		logger.AddBackends(backend)
 	}
-	logger.AddBackends(backend)
 
 	// Standard severity levels, as defined by RFC5424.
 	logger.Emerg("This is a test log message [%d]", os.Getpid(), logger.Fields{"foo": true, "bar": "baz", "nil": nil, "empty": ""})

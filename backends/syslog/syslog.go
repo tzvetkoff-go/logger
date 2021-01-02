@@ -1,3 +1,5 @@
+// +build !plan9,!windows
+
 // Package syslog provides a SysLog Logger backend.
 package syslog
 
@@ -17,11 +19,11 @@ type Backend struct {
 func NewBackend(
 	proto string,
 	addr string,
-	priority sl.Priority,
+	priority Priority,
 	tag string,
 	formatter logger.Formatter,
 ) (*Backend, error) {
-	writer, err := sl.Dial(proto, addr, priority, tag)
+	writer, err := sl.Dial(proto, addr, sl.Priority(priority), tag)
 	if err != nil {
 		return nil, err
 	}
