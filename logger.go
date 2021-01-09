@@ -17,9 +17,10 @@ func (l *Logger) Log(level Level, format string, v ...interface{}) {
 	if l.Level >= level {
 		fields := l.Fields.Copy()
 		if len(v) > 0 {
-			if f, ok := v[len(v)-1].(Fields); ok {
+			last := len(v) - 1
+			if f, ok := v[last].(Fields); ok {
 				fields.Update(f)
-				v = v[0 : len(v)-1]
+				v = v[0:last]
 			}
 		}
 
