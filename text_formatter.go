@@ -15,11 +15,11 @@ type TextFormatter struct {
 
 // Format returns log fields formatted as a string.
 func (f *TextFormatter) Format(fields Fields) string {
-	level := fields["level"].(Level)
-	delete(fields, "level")
-
 	t := fields["time"].(time.Time)
 	delete(fields, "time")
+
+	level := fields["level"].(Level)
+	delete(fields, "level")
 
 	msg := fields["msg"].(string)
 	delete(fields, "msg")
@@ -54,11 +54,19 @@ func (f *TextFormatter) Format(fields Fields) string {
 
 	builder := &strings.Builder{}
 
-	if f.Timestamps {
-		builder.WriteString(t.UTC().Format(f.TimestampFormat))
+	if f.Color {
+		builder.WriteString(color)
 	}
 
-	fmt.Fprintf(builder, "%s%s%s: %-48s", color, LookupLevel(level)[0:4], reset, msg)
+	if f.Timestamps {
+		fmt.Fprintf(builder, "time=%q ", t.UTC().Format(f.TimestampFormat))
+	}
+
+	fmt.Fprintf(builder, "level=%q", LookupLevel(level)[0:4])
+
+	if msg != "" {
+		fmt.Fprintf(builder, " msg=%q", msg)
+	}
 
 	for _, k := range fields.Keys() {
 		v := fields[k]
@@ -70,5 +78,9 @@ func (f *TextFormatter) Format(fields Fields) string {
 		}
 	}
 
-	return strings.TrimSpace(builder.String())
+	if f.Color {
+		builder.WriteString(reset)
+	}
+
+	return builder.String()
 }
