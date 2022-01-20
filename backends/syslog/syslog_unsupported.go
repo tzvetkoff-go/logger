@@ -1,5 +1,4 @@
-// +build plan9
-// +build windows
+//go:build plan9 || windows
 
 package syslog
 

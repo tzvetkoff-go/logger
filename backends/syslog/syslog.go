@@ -1,4 +1,4 @@
-// +build !plan9,!windows
+//go:build !plan9 && !windows
 
 // Package syslog provides a SysLog Logger backend.
 package syslog
